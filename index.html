@@ -3,9 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>POS Empat Sekawan - Business Day</title>
-    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js"></script>
+    <title>POS Kasir - Business Day</title>
     <style>
         * {
             margin: 0;
@@ -68,19 +66,15 @@
         }
 
         .header-logo {
-            width: 48px;
-            height: 48px;
+            width: 40px;
+            height: 40px;
             background: rgba(255, 255, 255, 0.2);
-            border-radius: 12px;
+            border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 700;
             font-size: 1.5rem;
-        }
-
-        .header-info {
-            flex: 1;
         }
 
         .header-title {
@@ -95,66 +89,17 @@
             margin-top: 2px;
         }
 
-        .group-badge {
-            display: inline-block;
-            background: rgba(255, 255, 255, 0.2);
-            padding: 0.4rem 0.9rem;
-            border-radius: 12px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            margin-top: 0.5rem;
-        }
-
-        .header-right {
-            display: flex;
-            align-items: center;
-            gap: 1.5rem;
-        }
-
-        .sync-status {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.85rem;
-            background: rgba(255, 255, 255, 0.15);
-            padding: 0.6rem 1.2rem;
-            border-radius: 20px;
-        }
-
-        .sync-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: #4ADE80;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-
-        .sync-dot.offline {
-            background: #FBBF24;
-            animation: none;
-        }
-
-        .sync-dot.error {
-            background: #EF4444;
-            animation: none;
-        }
-
         .header-time {
-            font-size: 0.85rem;
+            font-size: 0.95rem;
             text-align: right;
             display: flex;
             flex-direction: column;
-            gap: 2px;
+            gap: 4px;
         }
 
         .header-time small {
             opacity: 0.8;
-            font-size: 0.75rem;
+            font-size: 0.8rem;
         }
 
         /* ============ CONTAINER ============ */
@@ -173,7 +118,6 @@
             padding: 0.75rem;
             border-radius: var(--radius);
             box-shadow: var(--shadow);
-            flex-wrap: wrap;
         }
 
         .tab-button {
@@ -254,6 +198,12 @@
             gap: 1.25rem;
         }
 
+        @media (max-width: 768px) {
+            .menu-grid {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            }
+        }
+
         .product-card {
             background: linear-gradient(to bottom, var(--surface-light), white);
             border: 2px solid var(--border-color);
@@ -279,6 +229,12 @@
             justify-content: center;
             min-height: 70px;
             flex-shrink: 0;
+        }
+
+        .product-icon {
+            width: 40px;
+            height: 40px;
+            fill: white;
         }
 
         .product-info {
@@ -320,6 +276,10 @@
             background: var(--primary-dark);
         }
 
+        .btn-product:active {
+            transform: scale(0.95);
+        }
+
         /* ============ CART SECTION ============ */
         .cart-section {
             display: flex;
@@ -341,6 +301,7 @@
 
         .cart-items::-webkit-scrollbar-track {
             background: var(--surface);
+            border-radius: 4px;
         }
 
         .cart-items::-webkit-scrollbar-thumb {
@@ -368,6 +329,9 @@
             font-weight: 600;
             font-size: 0.85rem;
             margin-bottom: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .cart-item-price {
@@ -389,11 +353,11 @@
             border-radius: 3px;
             cursor: pointer;
             font-weight: 700;
-            font-size: 0.75rem;
             transition: var(--transition);
             display: flex;
             align-items: center;
             justify-content: center;
+            font-size: 0.75rem;
         }
 
         .qty-btn:hover {
@@ -435,6 +399,12 @@
             color: var(--text-secondary);
         }
 
+        .empty-icon {
+            font-size: 3rem;
+            margin-bottom: 0.75rem;
+            opacity: 0.5;
+        }
+
         /* ============ SUMMARY BOX ============ */
         .summary-box {
             background: linear-gradient(135deg, var(--surface) 0%, var(--surface-light) 100%);
@@ -448,6 +418,10 @@
             justify-content: space-between;
             margin-bottom: 0.6rem;
             font-size: 0.9rem;
+        }
+
+        .summary-row:last-child {
+            margin-bottom: 0;
         }
 
         .summary-row.highlight {
@@ -539,6 +513,10 @@
             justify-content: space-between;
             margin-bottom: 0.6rem;
             font-size: 0.9rem;
+        }
+
+        .payment-info-row:last-child {
+            margin-bottom: 0;
         }
 
         .payment-info-row.highlight {
@@ -647,87 +625,25 @@
             background: var(--surface);
         }
 
-        /* ============ SYNC SECTION ============ */
-        .sync-info {
-            background: var(--surface-light);
-            padding: 1rem;
-            border-radius: 6px;
-            border-left: 4px solid var(--success);
-            margin: 1.5rem 0;
+        tr:last-child td {
+            border-bottom: none;
         }
 
-        .sync-info.error {
-            border-left-color: var(--danger);
-        }
-
-        .sync-info-title {
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            font-size: 0.9rem;
-        }
-
-        .sync-info-text {
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-        }
-
-        .device-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-
-        .device-card {
-            background: white;
-            padding: 1rem;
-            border-radius: 6px;
-            border: 1px solid var(--border-color);
-            font-size: 0.85rem;
-        }
-
-        .device-name {
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-        }
-
-        .device-id {
-            font-family: monospace;
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-            word-break: break-all;
-        }
-
-        .action-buttons {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-            margin-top: 1.5rem;
-        }
-
-        .btn-action {
-            background: var(--primary);
+        .btn-reset {
+            background: var(--danger);
             color: white;
             border: none;
-            padding: 0.75rem 1.5rem;
+            padding: 0.85rem 1.75rem;
             border-radius: 6px;
             cursor: pointer;
             font-weight: 600;
-            font-size: 0.9rem;
             transition: var(--transition);
+            margin-top: 1.5rem;
+            font-size: 0.95rem;
         }
 
-        .btn-action:hover {
-            background: var(--primary-dark);
-        }
-
-        .btn-action.secondary {
-            background: var(--surface-dark);
-            color: var(--text-primary);
-        }
-
-        .btn-action.secondary:hover {
-            background: var(--border-color);
+        .btn-reset:hover {
+            background: #A03225;
         }
 
         /* ============ MODAL ============ */
@@ -754,6 +670,7 @@
             padding: 2rem;
             border-radius: var(--radius);
             max-width: 400px;
+            text-align: center;
             box-shadow: var(--shadow-lg);
         }
 
@@ -766,8 +683,8 @@
 
         .modal-message {
             color: var(--text-secondary);
-            margin-bottom: 1.5rem;
-            font-size: 0.95rem;
+            margin-bottom: 1.75rem;
+            line-height: 1.6;
         }
 
         .modal-buttons {
@@ -777,7 +694,7 @@
 
         .modal-btn {
             flex: 1;
-            padding: 0.75rem;
+            padding: 0.85rem;
             border: none;
             border-radius: 6px;
             cursor: pointer;
@@ -785,22 +702,23 @@
             transition: var(--transition);
         }
 
-        .modal-btn-primary {
-            background: var(--primary);
+        .modal-btn-confirm {
+            background: var(--danger);
             color: white;
         }
 
-        .modal-btn-primary:hover {
-            background: var(--primary-dark);
+        .modal-btn-confirm:hover {
+            background: #A03225;
         }
 
-        .modal-btn-secondary {
-            background: var(--surface-dark);
+        .modal-btn-cancel {
+            background: var(--surface);
             color: var(--text-primary);
+            border: 1px solid var(--border-color);
         }
 
-        .modal-btn-secondary:hover {
-            background: var(--border-color);
+        .modal-btn-cancel:hover {
+            background: var(--surface-light);
         }
 
         /* ============ TOAST ============ */
@@ -816,7 +734,6 @@
             animation: slideUp 0.3s ease, slideDown 0.3s ease 2.7s;
             z-index: 999;
             font-weight: 600;
-            font-size: 0.9rem;
         }
 
         @keyframes slideUp {
@@ -848,10 +765,8 @@
                 gap: 1rem;
             }
 
-            .header-right {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 0.75rem;
+            .header-time {
+                text-align: left;
             }
 
             .container {
@@ -866,24 +781,27 @@
                 gap: 1.5rem;
             }
 
-            .action-buttons {
+            .cart-items {
+                max-height: 250px;
+            }
+
+            .stats-grid {
                 grid-template-columns: 1fr;
             }
 
-            .modal-content {
-                max-width: 90%;
+            .tab-navigation {
+                padding: 0.5rem;
+            }
+
+            .tab-button {
+                padding: 0.6rem 1.2rem;
+                font-size: 0.85rem;
             }
         }
 
         @media (max-width: 480px) {
             header {
                 padding: 1rem;
-            }
-
-            .header-logo {
-                width: 40px;
-                height: 40px;
-                font-size: 1.25rem;
             }
 
             .header-title {
@@ -894,36 +812,49 @@
                 padding: 1rem 0.75rem;
             }
 
-            .menu-grid {
-                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-                gap: 0.85rem;
-            }
-
-            .quick-amount-grid {
-                grid-template-columns: 1fr;
+            .card {
+                padding: 1rem;
             }
 
             .main-layout {
                 grid-template-columns: 1fr;
             }
 
-            .sync-status {
-                padding: 0.5rem 0.8rem;
-                font-size: 0.75rem;
+            .menu-grid {
+                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+                gap: 0.85rem;
             }
 
-            .device-list {
+            .product-info {
+                padding: 0.75rem;
+            }
+
+            .quick-amount-grid {
                 grid-template-columns: 1fr;
+            }
+
+            .modal-content {
+                max-width: 90%;
+                padding: 1.5rem;
+            }
+
+            .toast {
+                right: 1rem;
+                left: 1rem;
+                bottom: 1rem;
+            }
+
+            table {
+                font-size: 0.8rem;
+            }
+
+            th, td {
+                padding: 0.75rem 0.5rem;
             }
         }
 
         .hidden {
             display: none;
-        }
-
-        .loading {
-            opacity: 0.6;
-            pointer-events: none;
         }
     </style>
 </head>
@@ -932,20 +863,13 @@
     <header>
         <div class="header-container">
             <div class="header-brand">
-                <div class="header-logo">E4</div>
-                <div class="header-info">
+                <div class="header-logo">₦</div>
+                <div>
                     <div class="header-title">POS Kasir</div>
                     <div class="header-subtitle">Business Day Sekolah</div>
-                    <div class="group-badge">Empat Sekawan</div>
                 </div>
             </div>
-            <div class="header-right">
-                <div class="sync-status">
-                    <div class="sync-dot" id="syncDot"></div>
-                    <span id="syncText">Connecting...</span>
-                </div>
-                <div class="header-time" id="currentTime"></div>
-            </div>
+            <div class="header-time" id="currentTime"></div>
         </div>
     </header>
 
@@ -955,7 +879,7 @@
         <div class="tab-navigation">
             <button class="tab-button active" data-tab="cashier">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+                    <circle cx="12" cy="12" r="1"/><path d="M12 1v6m0 6v4M4.22 4.22l4.24 4.24m3.08 3.08l4.24 4.24M1 12h6m6 0h4M4.22 19.78l4.24-4.24m3.08-3.08l4.24-4.24M19.78 19.78l-4.24-4.24m-3.08-3.08l-4.24-4.24"/>
                 </svg>
                 Kasir
             </button>
@@ -965,23 +889,17 @@
                 </svg>
                 Laporan
             </button>
-            <button class="tab-button" data-tab="sync">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
-                </svg>
-                Sync
-            </button>
         </div>
 
         <!-- CASHIER TAB -->
         <div id="cashier-tab" class="tab-content">
             <div class="main-layout">
-                <!-- MENU LEFT -->
+                <!-- MENU & CART LEFT -->
                 <div>
                     <div class="card">
                         <div class="card-header">
                             <div class="card-header-icon">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="white">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="white" stroke="white" stroke-width="1.5">
                                     <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
                                 </svg>
                             </div>
@@ -996,7 +914,7 @@
                     <div class="card">
                         <div class="card-header">
                             <div class="card-header-icon">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="white">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="white" stroke="white" stroke-width="1.5">
                                     <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
                                 </svg>
                             </div>
@@ -1004,7 +922,7 @@
                         </div>
                         <div class="cart-items" id="cartItems"></div>
                         <div class="empty-state" id="emptyCart">
-                            <div style="font-size: 2rem; margin-bottom: 0.5rem;">□</div>
+                            <div class="empty-icon">□</div>
                             <p>Belum ada pesanan</p>
                         </div>
                         <div class="summary-box" id="cartSummary" style="margin-top: 1rem;"></div>
@@ -1014,7 +932,7 @@
                     <div class="card">
                         <div class="card-header">
                             <div class="card-header-icon">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="white">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="white" stroke="white" stroke-width="1.5">
                                     <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/>
                                 </svg>
                             </div>
@@ -1027,9 +945,9 @@
                         </div>
 
                         <div class="quick-amount-grid">
-                            <button class="quick-amount-btn" data-amount="20000">+ 20rb</button>
-                            <button class="quick-amount-btn" data-amount="50000">+ 50rb</button>
-                            <button class="quick-amount-btn" data-amount="100000">+ 100rb</button>
+                            <button class="quick-amount-btn" data-amount="20000">+ 20 Ribu</button>
+                            <button class="quick-amount-btn" data-amount="50000">+ 50 Ribu</button>
+                            <button class="quick-amount-btn" data-amount="100000">+ 100 Ribu</button>
                             <button class="quick-amount-btn" data-amount="exact">Pas</button>
                         </div>
 
@@ -1059,7 +977,7 @@
             <div class="card">
                 <div class="card-header">
                     <div class="card-header-icon">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="white">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="white" stroke="white" stroke-width="1.5">
                             <line x1="12" y1="2" x2="12" y2="22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
                         </svg>
                     </div>
@@ -1084,7 +1002,7 @@
             <div class="card">
                 <div class="card-header">
                     <div class="card-header-icon">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="white">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="white" stroke="white" stroke-width="1.5">
                             <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
                         </svg>
                     </div>
@@ -1103,101 +1021,40 @@
                         </thead>
                         <tbody id="transactionBody">
                             <tr>
-                                <td colspan="5" style="text-align: center; color: var(--text-secondary);">Loading...</td>
+                                <td colspan="5" style="text-align: center; color: var(--text-secondary);">Belum ada transaksi</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
-            </div>
-        </div>
-
-        <!-- SYNC TAB -->
-        <div id="sync-tab" class="tab-content hidden">
-            <div class="card">
-                <div class="card-header">
-                    <div class="card-header-icon">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="white">
-                            <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
-                        </svg>
-                    </div>
-                    <div class="card-title">Status Sinkronisasi Firebase</div>
-                </div>
-
-                <div class="sync-info" id="syncInfo">
-                    <div class="sync-info-title" id="syncTitle">Menghubungkan ke Firebase...</div>
-                    <div class="sync-info-text" id="syncMessage">Tunggu sebentar</div>
-                </div>
-
-                <h3 style="margin: 1.5rem 0 1rem; font-size: 1rem; font-weight: 600;">Device Aktif</h3>
-                <div class="device-list" id="deviceList">
-                    <div style="text-align: center; color: var(--text-secondary); padding: 2rem;">Loading...</div>
-                </div>
-
-                <div class="action-buttons">
-                    <button class="btn-action" onclick="exportTransactions()">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: inline; margin-right: 0.5rem;">
-                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
-                        </svg>
-                        Export Data
-                    </button>
-                    <button class="btn-action secondary" onclick="clearTransactions()">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: inline; margin-right: 0.5rem;">
-                            <polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/>
-                        </svg>
-                        Clear Data
-                    </button>
-                </div>
+                <button class="btn-reset" id="resetBtn">Hapus Riwayat</button>
             </div>
         </div>
     </div>
 
-    <!-- CONFIRMATION MODAL -->
+    <!-- MODAL -->
     <div id="confirmModal" class="modal">
         <div class="modal-content">
-            <div class="modal-title" id="modalTitle">Konfirmasi</div>
+            <div class="modal-title">Konfirmasi</div>
             <div class="modal-message" id="modalMessage"></div>
             <div class="modal-buttons">
-                <button class="modal-btn modal-btn-secondary" id="modalCancel">Batal</button>
-                <button class="modal-btn modal-btn-primary" id="modalConfirm">Konfirmasi</button>
+                <button class="modal-btn modal-btn-cancel" id="modalCancel">Batal</button>
+                <button class="modal-btn modal-btn-confirm" id="modalConfirm">Konfirmasi</button>
             </div>
         </div>
     </div>
 
-    <!-- HIDDEN FILE INPUT -->
-    <input type="file" id="fileInput" accept=".json" style="display: none;">
-
-    <!-- FIREBASE SETUP -->
     <script>
-        // ============ FIREBASE CONFIGURATION ============
-        const firebaseConfig = {
-            apiKey: "AIzaSyCCnUahfaR1rOaRX0NXEIErKqCfswyYdt4",
-            authDomain: "all-in-one-84e4c.firebaseapp.com",
-            databaseURL: "https://all-in-one-84e4c-default-rtdb.asia-southeast1.firebasedatabase.app",
-            projectId: "all-in-one-84e4c",
-            storageBucket: "all-in-one-84e4c.firebasestorage.app",
-            messagingSenderId: "87087576926",
-            appId: "1:87087576926:web:cdee342cdc000ac789c1cf"
-        };
-
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.database();
-
         // ============ APPLICATION STATE ============
         const appState = {
-            deviceId: generateDeviceId(),
-            groupId: 'empat-sekawan',
             products: [
-                { id: 1, name: 'Kebab', price: 13000 },
-                { id: 2, name: 'Americano', price: 12000 },
-                { id: 3, name: 'Iced Latte', price: 15000 },
-                { id: 4, name: 'Matcha', price: 13000 },
-                { id: 5, name: 'Ice Cream', price: 6000 }
+                { id: 1, name: 'Kebab', price: 13000, icon: '<svg width="40" height="40" viewBox="0 0 24 24" fill="white" stroke="white" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>' },
+                { id: 2, name: 'Americano', price: 12000, icon: '<svg width="40" height="40" viewBox="0 0 24 24" fill="white"><path d="M3 5h2v6H3zm4 0h2v8H7zm4-1h2v9h-2zm4 1h2v8h-2zm4 0h2v6h-2z" opacity="0.5"/><ellipse cx="9" cy="4" rx="7" ry="3" fill="white" opacity="0.8"/></svg>' },
+                { id: 3, name: 'Iced Latte', price: 15000, icon: '<svg width="40" height="40" viewBox="0 0 24 24" fill="white"><rect x="7" y="1" width="10" height="4" rx="1"/><rect x="5" y="5" width="14" height="14" rx="2" fill="white" stroke="white" stroke-width="1.5"/><line x1="8" y1="8" x2="8" y2="17" stroke="white" stroke-width="1.5"/><line x1="12" y1="8" x2="12" y2="17" stroke="white" stroke-width="1.5"/><line x1="16" y1="8" x2="16" y2="17" stroke="white" stroke-width="1.5"/></svg>' },
+                { id: 4, name: 'Matcha', price: 13000, icon: '<svg width="40" height="40" viewBox="0 0 24 24" fill="white"><circle cx="12" cy="12" r="10"/><path d="M12 6v6m0 0h6" stroke="white" stroke-width="1.5" fill="none"/></svg>' },
+                { id: 5, name: 'Ice Cream', price: 6000, icon: '<svg width="40" height="40" viewBox="0 0 24 24" fill="white"><path d="M7 12a1 1 0 11-2 0 1 1 0 012 0zm5 0a1 1 0 11-2 0 1 1 0 012 0zm5 0a1 1 0 11-2 0 1 1 0 012 0z"/><path d="M12 2l6 8H6l6-8zm-3 8v10c0 1.66 1.34 3 3 3s3-1.34 3-3v-10" stroke="white" stroke-width="1.5" fill="none"/></svg>' }
             ],
             cart: [],
-            transactions: [],
-            firebaseConnected: false,
-            activeDevices: {}
+            transactions: []
         };
 
         // ============ DOM REFERENCES ============
@@ -1214,120 +1071,23 @@
         const totalRevenue = document.getElementById('totalRevenue');
         const totalItems = document.getElementById('totalItems');
         const totalTransaction = document.getElementById('totalTransaction');
-        const currentTime = document.getElementById('currentTime');
-        const syncDot = document.getElementById('syncDot');
-        const syncText = document.getElementById('syncText');
-        const syncInfo = document.getElementById('syncInfo');
-        const syncTitle = document.getElementById('syncTitle');
-        const syncMessage = document.getElementById('syncMessage');
-        const deviceList = document.getElementById('deviceList');
+        const resetBtn = document.getElementById('resetBtn');
         const confirmModal = document.getElementById('confirmModal');
-        const modalTitle = document.getElementById('modalTitle');
         const modalMessage = document.getElementById('modalMessage');
         const modalConfirm = document.getElementById('modalConfirm');
         const modalCancel = document.getElementById('modalCancel');
-        const fileInput = document.getElementById('fileInput');
+        const currentTime = document.getElementById('currentTime');
 
-        let confirmCallback = null;
+        let confirmAction = null;
 
         // ============ INITIALIZATION ============
         function init() {
+            loadStorage();
             renderMenu();
             updateUI();
             setupEvents();
             updateClock();
-            initializeFirebase();
             setInterval(updateClock, 1000);
-            setInterval(updateDeviceStatus, 5000);
-        }
-
-        // ============ GENERATE DEVICE ID ============
-        function generateDeviceId() {
-            let id = localStorage.getItem('deviceId');
-            if (!id) {
-                id = 'DEV-' + Math.random().toString(36).substr(2, 9).toUpperCase();
-                localStorage.setItem('deviceId', id);
-            }
-            return id;
-        }
-
-        // ============ INITIALIZE FIREBASE ============
-        function initializeFirebase() {
-            // Register device online
-            const deviceRef = db.ref(`empat-sekawan/devices/${appState.deviceId}`);
-            deviceRef.onDisconnect().remove();
-            deviceRef.set({
-                lastSeen: firebase.database.ServerValue.TIMESTAMP,
-                userAgent: navigator.userAgent.substring(0, 50)
-            }).catch(err => {
-                updateSyncStatus('Offline', false, 'offline');
-            });
-
-            // Listen to transactions
-            db.ref('empat-sekawan/transactions').on('value', (snapshot) => {
-                const data = snapshot.val();
-                if (data) {
-                    appState.transactions = Object.values(data).map(t => ({
-                        ...t,
-                        timestamp: t.timestamp || 0
-                    })).sort((a, b) => b.timestamp - a.timestamp);
-                    updateUI();
-                    updateSyncStatus('Terhubung ke Firebase', true, 'online');
-                    appState.firebaseConnected = true;
-                }
-            }, (err) => {
-                updateSyncStatus('Koneksi Gagal: ' + err.message, false, 'error');
-                appState.firebaseConnected = false;
-            });
-
-            // Listen to devices
-            db.ref('empat-sekawan/devices').on('value', (snapshot) => {
-                const data = snapshot.val() || {};
-                appState.activeDevices = data;
-                updateDeviceList();
-            });
-        }
-
-        // ============ UPDATE SYNC STATUS ============
-        function updateSyncStatus(message, success, status = 'online') {
-            syncTitle.textContent = success ? '✓ Sinkronisasi Aktif' : '⚠ Tidak Terhubung';
-            syncMessage.textContent = message;
-            syncInfo.classList.toggle('error', !success);
-            syncDot.className = `sync-dot ${status}`;
-            syncText.textContent = success ? 'Online' : 'Offline';
-        }
-
-        // ============ UPDATE DEVICE LIST ============
-        function updateDeviceList() {
-            const devices = appState.activeDevices;
-            if (!devices || Object.keys(devices).length === 0) {
-                deviceList.innerHTML = '<div style="text-align: center; color: var(--text-secondary); padding: 2rem;">Hanya device ini</div>';
-                return;
-            }
-
-            const html = Object.entries(devices).map(([id, device]) => {
-                const isCurrent = id === appState.deviceId;
-                return `
-                    <div class="device-card" style="${isCurrent ? 'border: 2px solid var(--primary);' : ''}">
-                        <div class="device-name">${isCurrent ? '📱 Device Ini' : '💻 Device Lain'}</div>
-                        <div class="device-id">${id}</div>
-                        <div style="font-size: 0.75rem; color: var(--success); margin-top: 0.5rem;">● Online</div>
-                    </div>
-                `;
-            }).join('');
-
-            deviceList.innerHTML = html;
-        }
-
-        // ============ UPDATE DEVICE STATUS ============
-        function updateDeviceStatus() {
-            if (!appState.firebaseConnected) return;
-            
-            db.ref(`empat-sekawan/devices/${appState.deviceId}`).update({
-                lastSeen: firebase.database.ServerValue.TIMESTAMP
-            }).catch(() => {
-                updateSyncStatus('Koneksi terputus', false, 'offline');
-            });
         }
 
         // ============ CLOCK ============
@@ -1342,9 +1102,7 @@
         function renderMenu() {
             menuGrid.innerHTML = appState.products.map(p => `
                 <div class="product-card" onclick="addCart(${p.id})">
-                    <div class="product-icon-area">
-                        <div style="font-size: 2.5rem;">₦</div>
-                    </div>
+                    <div class="product-icon-area">${p.icon}</div>
                     <div class="product-info">
                         <div class="product-name">${p.name}</div>
                         <div class="product-price">Rp ${formatNum(p.price)}</div>
@@ -1354,7 +1112,7 @@
             `).join('');
         }
 
-        // ============ CART FUNCTIONS ============
+        // ============ ADD TO CART ============
         function addCart(productId) {
             const product = appState.products.find(p => p.id === productId);
             const existing = appState.cart.find(i => i.id === productId);
@@ -1369,11 +1127,13 @@
             notify(`${product.name} ditambahkan`);
         }
 
+        // ============ REMOVE FROM CART ============
         function removeCart(index) {
             appState.cart.splice(index, 1);
             updateUI();
         }
 
+        // ============ UPDATE QUANTITY ============
         function updateQty(index, change) {
             const item = appState.cart[index];
             item.qty += change;
@@ -1449,7 +1209,7 @@
             if (appState.transactions.length === 0) {
                 transactionBody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--text-secondary);">Belum ada transaksi</td></tr>';
             } else {
-                transactionBody.innerHTML = appState.transactions.slice(0, 50).map(t => `
+                transactionBody.innerHTML = appState.transactions.map(t => `
                     <tr>
                         <td>${t.time}</td>
                         <td>${t.items}</td>
@@ -1476,70 +1236,44 @@
 
             const items = appState.cart.map(i => `${i.name} ×${i.qty}`).join(', ');
             const qty = appState.cart.reduce((sum, i) => sum + i.qty, 0);
-            const timestamp = Date.now();
 
-            const transaction = {
-                id: appState.deviceId + '-' + timestamp,
-                deviceId: appState.deviceId,
+            appState.transactions.push({
                 time: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
                 items: items,
                 total: total,
                 money: money,
                 change: money - total,
-                qty: qty,
-                timestamp: timestamp
-            };
+                qty: qty
+            });
 
-            // Save to Firebase
-            db.ref(`empat-sekawan/transactions/${timestamp}`).set(transaction)
-                .then(() => {
-                    appState.cart = [];
-                    moneyInput.value = '0';
-                    updateUI();
-                    notify('✓ Transaksi berhasil di-sync!');
-                })
-                .catch(err => {
-                    notify('Gagal menyimpan: ' + err.message, 'warning');
-                });
+            appState.cart = [];
+            moneyInput.value = '0';
+            saveStorage();
+            updateUI();
+            notify('✓ Transaksi berhasil!');
         }
 
-        // ============ EXPORT TRANSACTIONS ============
-        function exportTransactions() {
-            const data = {
-                group: 'Empat Sekawan',
-                exportDate: new Date().toISOString(),
-                deviceId: appState.deviceId,
-                transactions: appState.transactions
-            };
-
-            const json = JSON.stringify(data, null, 2);
-            const blob = new Blob([json], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `empat-sekawan-${new Date().getTime()}.json`;
-            a.click();
-            URL.revokeObjectURL(url);
-            notify('File diekspor!');
+        // ============ RESET HISTORY ============
+        function resetHistory() {
+            showConfirm('Hapus semua riwayat transaksi?', 'Data yang dihapus tidak bisa dikembalikan.', () => {
+                appState.transactions = [];
+                saveStorage();
+                updateUI();
+                notify('Riwayat dihapus');
+            });
         }
 
-        // ============ CLEAR TRANSACTIONS ============
-        function clearTransactions() {
-            showConfirm(
-                'Hapus Semua Data?',
-                'Semua transaksi akan dihapus secara permanen dari Firebase. Tindakan ini tidak bisa dibatalkan.',
-                () => {
-                    db.ref('empat-sekawan/transactions').remove()
-                        .then(() => {
-                            appState.transactions = [];
-                            updateUI();
-                            notify('Semua data telah dihapus');
-                        })
-                        .catch(err => {
-                            notify('Gagal menghapus data: ' + err.message, 'warning');
-                        });
-                }
-            );
+        // ============ STORAGE ============
+        function saveStorage() {
+            localStorage.setItem('posApp', JSON.stringify(appState));
+        }
+
+        function loadStorage() {
+            const saved = localStorage.getItem('posApp');
+            if (saved) {
+                const data = JSON.parse(saved);
+                appState.transactions = data.transactions || [];
+            }
         }
 
         // ============ UTILITIES ============
@@ -1556,10 +1290,9 @@
             setTimeout(() => toast.remove(), 3000);
         }
 
-        function showConfirm(title, message, callback) {
-            modalTitle.textContent = title;
-            modalMessage.textContent = message;
-            confirmCallback = callback;
+        function showConfirm(title, msg, callback) {
+            modalMessage.textContent = msg;
+            confirmAction = callback;
             confirmModal.classList.add('active');
         }
 
@@ -1587,6 +1320,9 @@
             // Checkout button
             checkoutBtn.addEventListener('click', checkout);
 
+            // Reset button
+            resetBtn.addEventListener('click', resetHistory);
+
             // Tab switching
             document.querySelectorAll('.tab-button').forEach(btn => {
                 btn.addEventListener('click', () => {
@@ -1600,7 +1336,7 @@
 
             // Modal
             modalConfirm.addEventListener('click', () => {
-                if (confirmCallback) confirmCallback();
+                if (confirmAction) confirmAction();
                 confirmModal.classList.remove('active');
             });
 
@@ -1609,7 +1345,7 @@
             });
         }
 
-        // START APP
+        // START
         init();
     </script>
 </body>
