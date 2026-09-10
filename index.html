@@ -1,0 +1,1352 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POS Kasir - Business Day</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #D35400;
+            --primary-dark: #B83F00;
+            --primary-light: #E67E22;
+            --secondary: #1A472A;
+            --accent: #27AE60;
+            --danger: #C0392B;
+            --warning: #D68910;
+            --success: #27AE60;
+            --surface: #F8F7F2;
+            --surface-light: #FDFCF9;
+            --surface-dark: #EBE8E1;
+            --text-primary: #2C3E50;
+            --text-secondary: #7F8C8D;
+            --border-color: #E1DDD6;
+            --shadow: 0 2px 8px rgba(44, 62, 80, 0.1);
+            --shadow-lg: 0 8px 24px rgba(44, 62, 80, 0.15);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --radius: 8px;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background-color: var(--surface);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        /* ============ HEADER ============ */
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-lg);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .header-logo {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+
+        .header-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .header-subtitle {
+            font-size: 0.8rem;
+            opacity: 0.85;
+            margin-top: 2px;
+        }
+
+        .header-time {
+            font-size: 0.95rem;
+            text-align: right;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .header-time small {
+            opacity: 0.8;
+            font-size: 0.8rem;
+        }
+
+        /* ============ CONTAINER ============ */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        /* ============ TABS ============ */
+        .tab-navigation {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            background: white;
+            padding: 0.75rem;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+        }
+
+        .tab-button {
+            background: transparent;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--text-secondary);
+            border-radius: 6px;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.95rem;
+        }
+
+        .tab-button:hover {
+            background: var(--surface);
+        }
+
+        .tab-button.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* ============ MAIN LAYOUT ============ */
+        .main-layout {
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 2rem;
+        }
+
+        @media (max-width: 1024px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ============ CARD ============ */
+        .card {
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 1.75rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--surface);
+        }
+
+        .card-header-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+        }
+
+        /* ============ MENU SECTION ============ */
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 1.25rem;
+        }
+
+        @media (max-width: 768px) {
+            .menu-grid {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            }
+        }
+
+        .product-card {
+            background: linear-gradient(to bottom, var(--surface-light), white);
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .product-card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 8px 16px rgba(211, 84, 0, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .product-icon-area {
+            background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%);
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 70px;
+            flex-shrink: 0;
+        }
+
+        .product-icon {
+            width: 40px;
+            height: 40px;
+            fill: white;
+        }
+
+        .product-info {
+            padding: 1rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .product-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .product-price {
+            color: var(--success);
+            font-weight: 700;
+            font-size: 0.95rem;
+            margin-bottom: 0.75rem;
+            margin-top: auto;
+        }
+
+        .btn-product {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.6rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.8rem;
+            transition: var(--transition);
+            width: 100%;
+        }
+
+        .btn-product:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-product:active {
+            transform: scale(0.95);
+        }
+
+        /* ============ CART SECTION ============ */
+        .cart-section {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .cart-items {
+            max-height: 380px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .cart-items::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .cart-items::-webkit-scrollbar-track {
+            background: var(--surface);
+            border-radius: 4px;
+        }
+
+        .cart-items::-webkit-scrollbar-thumb {
+            background: var(--text-secondary);
+            border-radius: 4px;
+        }
+
+        .cart-item {
+            background: var(--surface-light);
+            padding: 0.85rem;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .cart-item-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .cart-item-name {
+            font-weight: 600;
+            font-size: 0.85rem;
+            margin-bottom: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .cart-item-price {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .cart-controls {
+            display: flex;
+            gap: 0.4rem;
+            align-items: center;
+        }
+
+        .qty-btn {
+            background: white;
+            border: 1px solid var(--border-color);
+            width: 24px;
+            height: 24px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-weight: 700;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+        }
+
+        .qty-btn:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .qty-display {
+            min-width: 24px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 0.8rem;
+        }
+
+        .btn-remove {
+            background: var(--danger);
+            color: white;
+            border: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 3px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.75rem;
+        }
+
+        .btn-remove:hover {
+            background: #A03225;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 2rem 1rem;
+            color: var(--text-secondary);
+        }
+
+        .empty-icon {
+            font-size: 3rem;
+            margin-bottom: 0.75rem;
+            opacity: 0.5;
+        }
+
+        /* ============ SUMMARY BOX ============ */
+        .summary-box {
+            background: linear-gradient(135deg, var(--surface) 0%, var(--surface-light) 100%);
+            padding: 1.25rem;
+            border-radius: 6px;
+            border-left: 4px solid var(--primary);
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.6rem;
+            font-size: 0.9rem;
+        }
+
+        .summary-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .summary-row.highlight {
+            border-top: 2px solid var(--border-color);
+            padding-top: 0.75rem;
+            margin-top: 0.75rem;
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        .summary-label {
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        .summary-value {
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .summary-value.amount {
+            color: var(--success);
+        }
+
+        /* ============ PAYMENT SECTION ============ */
+        .payment-input-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .payment-label {
+            display: block;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 0.6rem;
+            color: var(--text-primary);
+        }
+
+        .payment-input {
+            width: 100%;
+            padding: 0.85rem;
+            border: 2px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: var(--transition);
+            background: white;
+        }
+
+        .payment-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(211, 84, 0, 0.1);
+        }
+
+        .quick-amount-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.6rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .quick-amount-btn {
+            background: var(--surface);
+            border: 1px solid var(--border-color);
+            padding: 0.65rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: var(--transition);
+        }
+
+        .quick-amount-btn:hover {
+            background: var(--primary-light);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .payment-info {
+            background: var(--surface-light);
+            padding: 1rem;
+            border-radius: 6px;
+            margin-bottom: 1.25rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .payment-info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.6rem;
+            font-size: 0.9rem;
+        }
+
+        .payment-info-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .payment-info-row.highlight {
+            border-top: 2px solid var(--border-color);
+            padding-top: 0.6rem;
+            margin-top: 0.6rem;
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        .change-value {
+            font-weight: 700;
+        }
+
+        .change-value.negative {
+            color: var(--danger);
+        }
+
+        .change-value.positive {
+            color: var(--success);
+        }
+
+        .btn-checkout {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-checkout:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(211, 84, 0, 0.3);
+        }
+
+        .btn-checkout:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* ============ REPORT SECTION ============ */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            border-left: 4px solid var(--primary);
+            text-align: center;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        th {
+            background: var(--surface);
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid var(--border-color);
+            font-size: 0.9rem;
+            color: var(--text-primary);
+        }
+
+        td {
+            padding: 0.95rem 1rem;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.9rem;
+        }
+
+        tr:hover {
+            background: var(--surface);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .btn-reset {
+            background: var(--danger);
+            color: white;
+            border: none;
+            padding: 0.85rem 1.75rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+            margin-top: 1.5rem;
+            font-size: 0.95rem;
+        }
+
+        .btn-reset:hover {
+            background: #A03225;
+        }
+
+        /* ============ MODAL ============ */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(44, 62, 80, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: var(--radius);
+            max-width: 400px;
+            text-align: center;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .modal-message {
+            color: var(--text-secondary);
+            margin-bottom: 1.75rem;
+            line-height: 1.6;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .modal-btn {
+            flex: 1;
+            padding: 0.85rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .modal-btn-confirm {
+            background: var(--danger);
+            color: white;
+        }
+
+        .modal-btn-confirm:hover {
+            background: #A03225;
+        }
+
+        .modal-btn-cancel {
+            background: var(--surface);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .modal-btn-cancel:hover {
+            background: var(--surface-light);
+        }
+
+        /* ============ TOAST ============ */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--success);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 6px;
+            box-shadow: var(--shadow-lg);
+            animation: slideUp 0.3s ease, slideDown 0.3s ease 2.7s;
+            z-index: 999;
+            font-weight: 600;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateY(100%);
+                opacity: 0;
+            }
+        }
+
+        /* ============ RESPONSIVE ============ */
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .header-time {
+                text-align: left;
+            }
+
+            .container {
+                padding: 1.5rem 1rem;
+            }
+
+            .card {
+                padding: 1.25rem;
+            }
+
+            .main-layout {
+                gap: 1.5rem;
+            }
+
+            .cart-items {
+                max-height: 250px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .tab-navigation {
+                padding: 0.5rem;
+            }
+
+            .tab-button {
+                padding: 0.6rem 1.2rem;
+                font-size: 0.85rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            header {
+                padding: 1rem;
+            }
+
+            .header-title {
+                font-size: 1.25rem;
+            }
+
+            .container {
+                padding: 1rem 0.75rem;
+            }
+
+            .card {
+                padding: 1rem;
+            }
+
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .menu-grid {
+                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+                gap: 0.85rem;
+            }
+
+            .product-info {
+                padding: 0.75rem;
+            }
+
+            .quick-amount-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .modal-content {
+                max-width: 90%;
+                padding: 1.5rem;
+            }
+
+            .toast {
+                right: 1rem;
+                left: 1rem;
+                bottom: 1rem;
+            }
+
+            table {
+                font-size: 0.8rem;
+            }
+
+            th, td {
+                padding: 0.75rem 0.5rem;
+            }
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- HEADER -->
+    <header>
+        <div class="header-container">
+            <div class="header-brand">
+                <div class="header-logo">₦</div>
+                <div>
+                    <div class="header-title">POS Kasir</div>
+                    <div class="header-subtitle">Business Day Sekolah</div>
+                </div>
+            </div>
+            <div class="header-time" id="currentTime"></div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <div class="container">
+        <!-- TAB NAVIGATION -->
+        <div class="tab-navigation">
+            <button class="tab-button active" data-tab="cashier">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="1"/><path d="M12 1v6m0 6v4M4.22 4.22l4.24 4.24m3.08 3.08l4.24 4.24M1 12h6m6 0h4M4.22 19.78l4.24-4.24m3.08-3.08l4.24-4.24M19.78 19.78l-4.24-4.24m-3.08-3.08l-4.24-4.24"/>
+                </svg>
+                Kasir
+            </button>
+            <button class="tab-button" data-tab="report">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="12" y1="2" x2="12" y2="22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                </svg>
+                Laporan
+            </button>
+        </div>
+
+        <!-- CASHIER TAB -->
+        <div id="cashier-tab" class="tab-content">
+            <div class="main-layout">
+                <!-- MENU & CART LEFT -->
+                <div>
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-header-icon">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="white" stroke="white" stroke-width="1.5">
+                                    <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+                                </svg>
+                            </div>
+                            <div class="card-title">Menu Produk</div>
+                        </div>
+                        <div class="menu-grid" id="menuGrid"></div>
+                    </div>
+                </div>
+
+                <!-- CART RIGHT -->
+                <div class="cart-section">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-header-icon">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="white" stroke="white" stroke-width="1.5">
+                                    <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+                                </svg>
+                            </div>
+                            <div class="card-title">Pesanan</div>
+                        </div>
+                        <div class="cart-items" id="cartItems"></div>
+                        <div class="empty-state" id="emptyCart">
+                            <div class="empty-icon">□</div>
+                            <p>Belum ada pesanan</p>
+                        </div>
+                        <div class="summary-box" id="cartSummary" style="margin-top: 1rem;"></div>
+                    </div>
+
+                    <!-- PAYMENT CARD -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-header-icon">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="white" stroke="white" stroke-width="1.5">
+                                    <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/>
+                                </svg>
+                            </div>
+                            <div class="card-title">Pembayaran</div>
+                        </div>
+
+                        <div class="payment-input-group">
+                            <label class="payment-label">Uang Diterima (Rp)</label>
+                            <input type="number" id="moneyInput" class="payment-input" placeholder="0" value="0">
+                        </div>
+
+                        <div class="quick-amount-grid">
+                            <button class="quick-amount-btn" data-amount="20000">+ 20 Ribu</button>
+                            <button class="quick-amount-btn" data-amount="50000">+ 50 Ribu</button>
+                            <button class="quick-amount-btn" data-amount="100000">+ 100 Ribu</button>
+                            <button class="quick-amount-btn" data-amount="exact">Pas</button>
+                        </div>
+
+                        <div class="payment-info">
+                            <div class="payment-info-row">
+                                <span class="summary-label">Total Bayar</span>
+                                <span class="summary-value amount" id="totalDisplay">Rp 0</span>
+                            </div>
+                            <div class="payment-info-row">
+                                <span class="summary-label">Uang Diterima</span>
+                                <span class="summary-value" id="receivedDisplay">Rp 0</span>
+                            </div>
+                            <div class="payment-info-row highlight">
+                                <span class="summary-label">Kembalian</span>
+                                <span class="change-value" id="changeDisplay">Rp 0</span>
+                            </div>
+                        </div>
+
+                        <button class="btn-checkout" id="checkoutBtn" disabled>Bayar Sekarang</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- REPORT TAB -->
+        <div id="report-tab" class="tab-content hidden">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-header-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="white" stroke="white" stroke-width="1.5">
+                            <line x1="12" y1="2" x2="12" y2="22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                        </svg>
+                    </div>
+                    <div class="card-title">Ringkasan Hari Ini</div>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">Total Pendapatan</div>
+                        <div class="stat-value" id="totalRevenue">Rp 0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Item Terjual</div>
+                        <div class="stat-value" id="totalItems">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Transaksi</div>
+                        <div class="stat-value" id="totalTransaction">0</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-header-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="white" stroke="white" stroke-width="1.5">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+                        </svg>
+                    </div>
+                    <div class="card-title">Riwayat Transaksi</div>
+                </div>
+                <div class="table-wrapper">
+                    <table id="transactionTable">
+                        <thead>
+                            <tr>
+                                <th>Waktu</th>
+                                <th>Item</th>
+                                <th>Total</th>
+                                <th>Diterima</th>
+                                <th>Kembalian</th>
+                            </tr>
+                        </thead>
+                        <tbody id="transactionBody">
+                            <tr>
+                                <td colspan="5" style="text-align: center; color: var(--text-secondary);">Belum ada transaksi</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <button class="btn-reset" id="resetBtn">Hapus Riwayat</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL -->
+    <div id="confirmModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-title">Konfirmasi</div>
+            <div class="modal-message" id="modalMessage"></div>
+            <div class="modal-buttons">
+                <button class="modal-btn modal-btn-cancel" id="modalCancel">Batal</button>
+                <button class="modal-btn modal-btn-confirm" id="modalConfirm">Konfirmasi</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============ APPLICATION STATE ============
+        const appState = {
+            products: [
+                { id: 1, name: 'Kebab', price: 13000, icon: '<svg width="40" height="40" viewBox="0 0 24 24" fill="white" stroke="white" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>' },
+                { id: 2, name: 'Americano', price: 12000, icon: '<svg width="40" height="40" viewBox="0 0 24 24" fill="white"><path d="M3 5h2v6H3zm4 0h2v8H7zm4-1h2v9h-2zm4 1h2v8h-2zm4 0h2v6h-2z" opacity="0.5"/><ellipse cx="9" cy="4" rx="7" ry="3" fill="white" opacity="0.8"/></svg>' },
+                { id: 3, name: 'Iced Latte', price: 15000, icon: '<svg width="40" height="40" viewBox="0 0 24 24" fill="white"><rect x="7" y="1" width="10" height="4" rx="1"/><rect x="5" y="5" width="14" height="14" rx="2" fill="white" stroke="white" stroke-width="1.5"/><line x1="8" y1="8" x2="8" y2="17" stroke="white" stroke-width="1.5"/><line x1="12" y1="8" x2="12" y2="17" stroke="white" stroke-width="1.5"/><line x1="16" y1="8" x2="16" y2="17" stroke="white" stroke-width="1.5"/></svg>' },
+                { id: 4, name: 'Matcha', price: 13000, icon: '<svg width="40" height="40" viewBox="0 0 24 24" fill="white"><circle cx="12" cy="12" r="10"/><path d="M12 6v6m0 0h6" stroke="white" stroke-width="1.5" fill="none"/></svg>' },
+                { id: 5, name: 'Ice Cream', price: 6000, icon: '<svg width="40" height="40" viewBox="0 0 24 24" fill="white"><path d="M7 12a1 1 0 11-2 0 1 1 0 012 0zm5 0a1 1 0 11-2 0 1 1 0 012 0zm5 0a1 1 0 11-2 0 1 1 0 012 0z"/><path d="M12 2l6 8H6l6-8zm-3 8v10c0 1.66 1.34 3 3 3s3-1.34 3-3v-10" stroke="white" stroke-width="1.5" fill="none"/></svg>' }
+            ],
+            cart: [],
+            transactions: []
+        };
+
+        // ============ DOM REFERENCES ============
+        const menuGrid = document.getElementById('menuGrid');
+        const cartItems = document.getElementById('cartItems');
+        const emptyCart = document.getElementById('emptyCart');
+        const cartSummary = document.getElementById('cartSummary');
+        const moneyInput = document.getElementById('moneyInput');
+        const totalDisplay = document.getElementById('totalDisplay');
+        const receivedDisplay = document.getElementById('receivedDisplay');
+        const changeDisplay = document.getElementById('changeDisplay');
+        const checkoutBtn = document.getElementById('checkoutBtn');
+        const transactionBody = document.getElementById('transactionBody');
+        const totalRevenue = document.getElementById('totalRevenue');
+        const totalItems = document.getElementById('totalItems');
+        const totalTransaction = document.getElementById('totalTransaction');
+        const resetBtn = document.getElementById('resetBtn');
+        const confirmModal = document.getElementById('confirmModal');
+        const modalMessage = document.getElementById('modalMessage');
+        const modalConfirm = document.getElementById('modalConfirm');
+        const modalCancel = document.getElementById('modalCancel');
+        const currentTime = document.getElementById('currentTime');
+
+        let confirmAction = null;
+
+        // ============ INITIALIZATION ============
+        function init() {
+            loadStorage();
+            renderMenu();
+            updateUI();
+            setupEvents();
+            updateClock();
+            setInterval(updateClock, 1000);
+        }
+
+        // ============ CLOCK ============
+        function updateClock() {
+            const now = new Date();
+            const time = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+            const date = now.toLocaleDateString('id-ID', { weekday: 'short', day: 'numeric', month: 'short' });
+            currentTime.innerHTML = `${time}<br><small>${date}</small>`;
+        }
+
+        // ============ RENDER MENU ============
+        function renderMenu() {
+            menuGrid.innerHTML = appState.products.map(p => `
+                <div class="product-card" onclick="addCart(${p.id})">
+                    <div class="product-icon-area">${p.icon}</div>
+                    <div class="product-info">
+                        <div class="product-name">${p.name}</div>
+                        <div class="product-price">Rp ${formatNum(p.price)}</div>
+                        <button class="btn-product">Tambah</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // ============ ADD TO CART ============
+        function addCart(productId) {
+            const product = appState.products.find(p => p.id === productId);
+            const existing = appState.cart.find(i => i.id === productId);
+
+            if (existing) {
+                existing.qty++;
+            } else {
+                appState.cart.push({ ...product, qty: 1 });
+            }
+
+            updateUI();
+            notify(`${product.name} ditambahkan`);
+        }
+
+        // ============ REMOVE FROM CART ============
+        function removeCart(index) {
+            appState.cart.splice(index, 1);
+            updateUI();
+        }
+
+        // ============ UPDATE QUANTITY ============
+        function updateQty(index, change) {
+            const item = appState.cart[index];
+            item.qty += change;
+            if (item.qty <= 0) {
+                removeCart(index);
+            } else {
+                updateUI();
+            }
+        }
+
+        // ============ CALCULATE TOTAL ============
+        function getTotal() {
+            return appState.cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+        }
+
+        // ============ UPDATE UI ============
+        function updateUI() {
+            const total = getTotal();
+            const money = parseInt(moneyInput.value) || 0;
+            const change = money - total;
+
+            // Render cart
+            if (appState.cart.length === 0) {
+                cartItems.innerHTML = '';
+                emptyCart.style.display = 'block';
+            } else {
+                emptyCart.style.display = 'none';
+                cartItems.innerHTML = appState.cart.map((item, i) => `
+                    <div class="cart-item">
+                        <div class="cart-item-info">
+                            <div class="cart-item-name">${item.name}</div>
+                            <div class="cart-item-price">Rp ${formatNum(item.price)} × ${item.qty}</div>
+                        </div>
+                        <div class="cart-controls">
+                            <button class="qty-btn" onclick="updateQty(${i}, -1)">−</button>
+                            <div class="qty-display">${item.qty}</div>
+                            <button class="qty-btn" onclick="updateQty(${i}, 1)">+</button>
+                            <button class="btn-remove" onclick="removeCart(${i})">✕</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            // Update summary
+            cartSummary.innerHTML = `
+                <div class="summary-row">
+                    <span class="summary-label">Subtotal</span>
+                    <span class="summary-value amount">Rp ${formatNum(total)}</span>
+                </div>
+                <div class="summary-row">
+                    <span class="summary-label">Item</span>
+                    <span class="summary-value">${appState.cart.length}</span>
+                </div>
+            `;
+
+            // Update payment display
+            totalDisplay.textContent = `Rp ${formatNum(total)}`;
+            receivedDisplay.textContent = `Rp ${formatNum(money)}`;
+            changeDisplay.textContent = `Rp ${formatNum(Math.max(change, 0))}`;
+            changeDisplay.className = change < 0 ? 'change-value negative' : 'change-value positive';
+
+            // Update button state
+            checkoutBtn.disabled = appState.cart.length === 0 || money < total;
+
+            // Update stats
+            const totalRev = appState.transactions.reduce((sum, t) => sum + t.total, 0);
+            const totalQty = appState.transactions.reduce((sum, t) => sum + t.qty, 0);
+            totalRevenue.textContent = `Rp ${formatNum(totalRev)}`;
+            totalItems.textContent = totalQty;
+            totalTransaction.textContent = appState.transactions.length;
+
+            // Update transaction table
+            if (appState.transactions.length === 0) {
+                transactionBody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--text-secondary);">Belum ada transaksi</td></tr>';
+            } else {
+                transactionBody.innerHTML = appState.transactions.map(t => `
+                    <tr>
+                        <td>${t.time}</td>
+                        <td>${t.items}</td>
+                        <td>Rp ${formatNum(t.total)}</td>
+                        <td>Rp ${formatNum(t.money)}</td>
+                        <td>Rp ${formatNum(t.change)}</td>
+                    </tr>
+                `).join('');
+            }
+        }
+
+        // ============ CHECKOUT ============
+        function checkout() {
+            const total = getTotal();
+            const money = parseInt(moneyInput.value) || 0;
+
+            if (appState.cart.length === 0) {
+                return notify('Pesanan kosong!', 'warning');
+            }
+
+            if (money < total) {
+                return notify('Uang tidak cukup!', 'warning');
+            }
+
+            const items = appState.cart.map(i => `${i.name} ×${i.qty}`).join(', ');
+            const qty = appState.cart.reduce((sum, i) => sum + i.qty, 0);
+
+            appState.transactions.push({
+                time: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+                items: items,
+                total: total,
+                money: money,
+                change: money - total,
+                qty: qty
+            });
+
+            appState.cart = [];
+            moneyInput.value = '0';
+            saveStorage();
+            updateUI();
+            notify('✓ Transaksi berhasil!');
+        }
+
+        // ============ RESET HISTORY ============
+        function resetHistory() {
+            showConfirm('Hapus semua riwayat transaksi?', 'Data yang dihapus tidak bisa dikembalikan.', () => {
+                appState.transactions = [];
+                saveStorage();
+                updateUI();
+                notify('Riwayat dihapus');
+            });
+        }
+
+        // ============ STORAGE ============
+        function saveStorage() {
+            localStorage.setItem('posApp', JSON.stringify(appState));
+        }
+
+        function loadStorage() {
+            const saved = localStorage.getItem('posApp');
+            if (saved) {
+                const data = JSON.parse(saved);
+                appState.transactions = data.transactions || [];
+            }
+        }
+
+        // ============ UTILITIES ============
+        function formatNum(n) {
+            return n.toLocaleString('id-ID');
+        }
+
+        function notify(msg, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.style.background = type === 'warning' ? 'var(--warning)' : 'var(--success)';
+            toast.textContent = msg;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        function showConfirm(title, msg, callback) {
+            modalMessage.textContent = msg;
+            confirmAction = callback;
+            confirmModal.classList.add('active');
+        }
+
+        // ============ EVENT LISTENERS ============
+        function setupEvents() {
+            // Money input
+            moneyInput.addEventListener('input', updateUI);
+            moneyInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') checkout();
+            });
+
+            // Quick amount buttons
+            document.querySelectorAll('.quick-amount-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const amount = btn.dataset.amount;
+                    if (amount === 'exact') {
+                        moneyInput.value = getTotal();
+                    } else {
+                        moneyInput.value = parseInt(amount) + (parseInt(moneyInput.value) || 0);
+                    }
+                    updateUI();
+                });
+            });
+
+            // Checkout button
+            checkoutBtn.addEventListener('click', checkout);
+
+            // Reset button
+            resetBtn.addEventListener('click', resetHistory);
+
+            // Tab switching
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const tab = btn.dataset.tab;
+                    document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
+                    document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+                    btn.classList.add('active');
+                    document.getElementById(`${tab}-tab`).classList.remove('hidden');
+                });
+            });
+
+            // Modal
+            modalConfirm.addEventListener('click', () => {
+                if (confirmAction) confirmAction();
+                confirmModal.classList.remove('active');
+            });
+
+            modalCancel.addEventListener('click', () => {
+                confirmModal.classList.remove('active');
+            });
+        }
+
+        // START
+        init();
+    </script>
+</body>
+</html>
